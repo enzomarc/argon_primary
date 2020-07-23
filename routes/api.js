@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const api = express.Router();
 
 const configController = require('../controllers/configController');
+const staffController = require('../controllers/staffController');
 
 
 // CORS Middleware
@@ -18,8 +19,13 @@ api.use((req, res, next) => {
 api.use(bodyParser.json({ strict: false }));
 api.use(bodyParser.urlencoded({ extended: false }));
 
-// Routes
+// Config routes
 api.post('/config', configController.update);
 
+// Staff routes
+api.post('/staff', staffController.store);
+api.get('/staff/:id', staffController.show);
+api.post('/staff/:id/update', staffController.update);
+api.get('/staff/:id/delete', staffController.delete);
 
 module.exports = api;

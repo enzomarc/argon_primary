@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Argon - Tableau de bord</title>
+    <title>Argon - {{title}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Argon Dashboard" name="description" />
     <meta content="Licon Corp" name="author" />
@@ -12,6 +12,15 @@
 
     <!-- jquery.vectormap css -->
     <link href="/assets/libs/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet"
+        type="text/css" />
+
+    <!-- DataTables -->
+    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
+        type="text/css" />
+
+    <!-- Responsive datatable examples -->
+    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet"
         type="text/css" />
 
     <!-- Bootstrap Css -->
@@ -87,7 +96,7 @@
                                             </a>
                                             <div class="dropdown-menu" aria-labelledby="topnav-dashboard">
                                                 <a href="/students" class="dropdown-item">Les élèves</a>
-                                                <a href="/staff" class="dropdown-item">Le personnel</a>
+                                                <a href="/scolarity/staff" class="dropdown-item">Le personnel</a>
                                                 <a href="/communication" class="dropdown-item">La communication</a>
                                             </div>
                                         </li>
@@ -339,11 +348,11 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-6">
-                                <script>document.write(new Date().getFullYear())</script> © Qovex.
+                                <script>document.write(new Date().getFullYear())</script> © MVENG Engineering.
                             </div>
                             <div class="col-sm-6">
                                 <div class="text-sm-right d-none d-sm-block">
-                                    Design & Develop by Themesbrand
+                                    Design & Develop by Licon Corp
                                 </div>
                             </div>
                         </div>
