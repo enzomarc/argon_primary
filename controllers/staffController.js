@@ -1,4 +1,5 @@
 const Staff = require('../models/staff');
+const User = require('../models/user');
 
 /**
  * Show establishment staff list.
@@ -23,7 +24,7 @@ exports.index = async (req, res) => {
         }
 
         const _populated = staff.length > 0;
-        res.render('staff/index', { layout: 'main', title: 'Personnel', all: staff, populated: _populated, messages: _messages });
+        res.render('staff', { layout: 'main', title: 'Personnel', all: staff, populated: _populated, messages: _messages });
     });
 };
 
@@ -56,13 +57,13 @@ exports.store = async (req, res) => {
     await Staff.findOne({ phone: req.body.phone }, async (err, result) => {
         if (result != null) {
             req.flash('error', "Un personnel avec les mêmes informations existe déja.");
-            res.redirect('/staff');
+            return res.redirect('/staff');
         } else {
             await Staff.create(req.body, (err, result) => {
                 if (err) {
-                    console.error(error);
+                    console.error(err);
                     req.flash('error', "Une erreur est survenue lors de l'ajout du personnel.");
-                    res.status(500).redirect('/staff');
+                    return res.status(500).redirect('/staff');
                 }
 
                 req.flash('success', "Personnel ajouté avec succès.");
@@ -85,7 +86,7 @@ exports.update = async (req, res) => {
         if (err) {
             console.log(err);
             req.flash('error', "Une erreur est survenue lors de la mise à jour du personnel.");
-            res.status(500).redirect('/staff');
+            return res.status(500).redirect('/staff');
         }
 
         req.flash('success', "Le personnel a été modifié avec succès.");
@@ -103,14 +104,16 @@ exports.delete = async (req, res, next) => {
     const id = req.params.id;
 
     // TODO: Delete staff related
-    await Staff.findOneAndDelete({ _id: id }, (err, result) => {
+    await Staff.findOneAndDelete({ _id: id }, async (err, result) => {
         if (err) {
             console.log(err);
             req.flash('error', "Une erreur est survenue lors de la suppression du personnel.");
-            res.status(500).redirect('/staff');
+            return res.status(500).redirect('/staff');
         }
 
-        req.flash('success', "Le personnel a été supprimé avec succès.");
-        res.redirect('/staff');
+        // Delete staff user account
+        await User.findOneAndDelete({ staff: id });
+
+        res.json({ message: "Le personnel a été supprimé avec succès." });
     });
 };

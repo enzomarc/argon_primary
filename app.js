@@ -11,8 +11,7 @@ const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-ac
 const routes = require('./routes/web');
 const apiRoutes = require('./routes/api');
 
-
-mongoose.connect("mongodb://127.0.0.1:27017/argon", { useNewUrlParser: true })
+mongoose.connect("mongodb://127.0.0.1:27017/argon")
     .then(() => {
         console.log("Connected to MongoDB");
     })
@@ -30,7 +29,11 @@ app.use(flash());
 // View engine config
 app.set('view engine', 'hbs');
 app.engine('hbs', handlebars({
-    layoutsDir: path.join(__dirname, '/views/layouts'), extname: 'hbs', handlebars: allowInsecurePrototypeAccess(handle), helpers: {
+    layoutsDir: path.join(__dirname, '/views/layouts'),
+    partialsDir: path.join(__dirname, '/views/partials'),
+    extname: 'hbs',
+    handlebars: allowInsecurePrototypeAccess(handle),
+    helpers: {
         inc: (value) => value + 1
     }
 }));

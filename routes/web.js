@@ -3,6 +3,7 @@ const web = express.Router();
 
 const configController = require('../controllers/configController');
 const staffController = require('../controllers/staffController');
+const userController = require('../controllers/userController');
 
 
 // Routes
@@ -16,6 +17,6 @@ web.get('/login', (req, res, next) => {
 
 web.get('/settings', configController.show);
 web.get('/staff', staffController.index);
-
+web.get('/users', userController.index);
 
 module.exports = web;

@@ -4,6 +4,7 @@ const api = express.Router();
 
 const configController = require('../controllers/configController');
 const staffController = require('../controllers/staffController');
+const userController = require('../controllers/userController');
 
 
 // CORS Middleware
@@ -27,5 +28,10 @@ api.post('/staff', staffController.store);
 api.get('/staff/:id', staffController.show);
 api.post('/staff/:id/update', staffController.update);
 api.get('/staff/:id/delete', staffController.delete);
+
+// User routes
+api.post('/users', userController.store);
+api.post('/users/:id/toggle', userController.toggle);
+api.get('/users/:id/delete', userController.delete);
 
 module.exports = api;
