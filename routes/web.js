@@ -14,11 +14,11 @@ web.get('/login', (req, res, next) => {
     res.render('login', { layout: false });
 });
 
-web.get('/', authMiddleware, (req, res, next) => {
+web.get('/', (req, res, next) => {
     res.render('index', { layout: 'main', title: 'Tableau de bord' });
 });
-web.get('/settings', authMiddleware, configController.show);
-web.get('/staff', authMiddleware, staffController.index);
+web.get('/settings', configController.show);
+web.get('/staff', staffController.index);
 web.get('/users', authMiddleware, userController.index);
 
 module.exports = web;

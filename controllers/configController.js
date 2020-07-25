@@ -1,4 +1,4 @@
-const Config = require('../models/config');
+const Config = require('../models/index').Config;
 
 /**
  * Update establishment settings.
@@ -9,41 +9,26 @@ const Config = require('../models/config');
  */
 exports.update = async (req, res, next) => {
     try {
-        const address = {
-            country: req.body.country,
-            region: req.body.region,
-            department: req.body.department,
-            borough: req.body.borough,
-            city: req.body.city,
-            postal_code: req.body.postal_code,
-            core: req.body.core,
-        };
-
-        delete req.body.country;
-        delete req.body.region;
-        delete req.body.department;
-        delete req.body.borough;
-        delete req.body.city;
-        delete req.body.postal_code;
-        delete req.body.core;
-
         const data = {
             ...req.body,
-            address: address,
         };
 
         await Config.count().then(async (count) => {
             if (count <= 0) {
                 await Config.create(data)
                     .then(() => {
+                        req.flash('success', "Les paramètres de l'établissement ont été enregistré avec succès.");
                         res.status(201).redirect('/settings');
                     })
                     .catch((error) => {
                         console.error(error);
                     });
             } else {
-                await Config.findOneAndUpdate(data)
+                const conf = await Config.findOne();
+
+                await conf.update(data)
                     .then(() => {
+                        req.flash('success', "Les paramètres de l'établissement ont été enregistré avec succès.");
                         res.status(201).redirect('/settings');
                     })
                     .catch((error) => {
@@ -66,7 +51,12 @@ exports.update = async (req, res, next) => {
  * @param next 
  */
 exports.show = async (req, res, next) => {
-    await Config.findOne().then((conf) => {
-        res.render('settings', { title: 'Paramétrage', config: conf, });
-    });
+    await Config.findOne()
+        .then((conf) => {
+            res.render('settings', { title: 'Paramétrage', config: conf });
+        })
+        .catch((err) => {
+            req.flash('error', "Une erreur est survenue lors de l'obtention des paramètres de votre établissement.");
+            console.error(err);
+        });
 }

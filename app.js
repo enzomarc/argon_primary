@@ -2,7 +2,7 @@ const express = require('express');
 const handle = require('handlebars');
 const handlebars = require('express-handlebars');
 const path = require('path');
-const mongoose = require('mongoose');
+const { Sequelize } = require('sequelize');
 const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -11,13 +11,6 @@ const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-ac
 const routes = require('./routes/web');
 const apiRoutes = require('./routes/api');
 
-mongoose.connect("mongodb://127.0.0.1:27017/argon")
-    .then(() => {
-        console.log("Connected to MongoDB");
-    })
-    .catch((error) => {
-        console.error(error);
-    });
 
 const app = express();
 

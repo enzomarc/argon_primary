@@ -1,5 +1,4 @@
-const Staff = require('../models/staff');
-const User = require('../models/user');
+const db = require('../models/index');
 
 /**
  * Show establishment staff list.
@@ -11,21 +10,25 @@ exports.index = async (req, res) => {
     const error = req.flash('error');
     const info = req.flash('info');
     const success = req.flash('success');
+    let _populated = false;
+    let staff = [];
     const _messages = {
         success: success,
         info: info,
         error: error
     };
 
-    await Staff.find((err, staff) => {
-        if (err) {
+    await db.Staff.findAll()
+        .then((result) => {
+            staff = result;
+            _populated = staff.length > 0;
+        })
+        .catch((err) => {
             console.error(err);
             req.flash('error', "Une erreur est survenue lors de la récupération de la liste du personnel.");
-        }
+        });
 
-        const _populated = staff.length > 0;
-        res.render('staff', { layout: 'main', title: 'Personnel', all: staff, populated: _populated, messages: _messages });
-    });
+    res.render('staff', { layout: 'main', title: 'Personnel', all: staff, populated: _populated, messages: _messages });
 };
 
 /**
@@ -37,14 +40,14 @@ exports.index = async (req, res) => {
 exports.show = async (req, res) => {
     const id = req.params.id;
 
-    await Staff.findOne({ _id: id }, (err, staff) => {
-        if (err) {
+    await db.Staff.findOne({ id: id })
+        .then((staff) => {
+            return res.json(staff);
+        })
+        .catch((err) => {
             console.error(err);
             return res.status(500).json('Impossible de récupérer les informations du personnel.');
-        }
-
-        return res.json(staff);
-    });
+        });
 };
 
 /**
@@ -54,23 +57,25 @@ exports.show = async (req, res) => {
  * @param {*} res 
  */
 exports.store = async (req, res) => {
-    await Staff.findOne({ phone: req.body.phone }, async (err, result) => {
-        if (result != null) {
-            req.flash('error', "Un personnel avec les mêmes informations existe déja.");
-            return res.redirect('/staff');
-        } else {
-            await Staff.create(req.body, (err, result) => {
-                if (err) {
-                    console.error(err);
-                    req.flash('error', "Une erreur est survenue lors de l'ajout du personnel.");
-                    return res.status(500).redirect('/staff');
-                }
-
-                req.flash('success', "Personnel ajouté avec succès.");
-                res.redirect('/staff');
-            });
-        }
-    });
+    await db.Staff.findOne({ where: { phone: req.body.phone } })
+        .then(async (result) => {
+            if (result != null) {
+                req.flash('error', "Un personnel avec les mêmes informations existe déja.");
+                return res.redirect('/staff');
+            } else {
+                const staff = new db.Staff(req.body);
+                await staff.save()
+                    .then(() => {
+                        req.flash('success', "Personnel ajouté avec succès.");
+                        res.redirect('/staff');
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        req.flash('error', "Une erreur est survenue lors de l'ajout du personnel.");
+                        return res.status(500).redirect('/staff');
+                    });
+            }
+        });
 };
 
 /**
@@ -81,6 +86,13 @@ exports.store = async (req, res) => {
  */
 exports.update = async (req, res) => {
     const id = req.params.id;
+    await db.Staff.findOne({ where: { id: id } })
+        .then((staff) => {
+            if (staff != null) {
+                staff.save();
+                // TODO: Check and continue here
+            }
+        })
 
     await Staff.findOneAndUpdate({ _id: id }, req.body, (err, result) => {
         if (err) {
