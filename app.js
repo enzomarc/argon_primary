@@ -45,4 +45,10 @@ app.use(express.static('public'));
 app.use(routes);
 app.use('/api', apiRoutes);
 
+// Errors pages
+app.use((req, res) => {
+    res.status(404);
+    res.render('errors/404', { layout: false });
+});
+
 module.exports = app;

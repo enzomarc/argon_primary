@@ -6,17 +6,19 @@ const staffController = require('../controllers/staffController');
 const userController = require('../controllers/userController');
 
 
-// Routes
-web.get('/', (req, res, next) => {
-    res.render('index', { layout: 'main', title: 'Tableau de bord' });
-});
+const authMiddleware = require('../middlewares/auth');
 
+
+// Routes
 web.get('/login', (req, res, next) => {
     res.render('login', { layout: false });
 });
 
-web.get('/settings', configController.show);
-web.get('/staff', staffController.index);
-web.get('/users', userController.index);
+web.get('/', authMiddleware, (req, res, next) => {
+    res.render('index', { layout: 'main', title: 'Tableau de bord' });
+});
+web.get('/settings', authMiddleware, configController.show);
+web.get('/staff', authMiddleware, staffController.index);
+web.get('/users', authMiddleware, userController.index);
 
 module.exports = web;

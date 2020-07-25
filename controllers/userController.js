@@ -1,9 +1,6 @@
 const User = require('../models/user');
 const Staff = require('../models/staff');
 const bcrypt = require('bcrypt');
-const { findOneAndUpdate } = require('../models/user');
-const user = require('../models/user');
-const mongoose = require('mongoose');
 
 exports.index = async (req, res) => {
     const error = req.flash('error');
@@ -47,7 +44,6 @@ exports.show = async (req, res) => {
 
 exports.store = async (req, res) => {
     const _staff = req.body.staff;
-    const saltRounds = 12;
 
     await Staff.findOne({ _id: _staff }, async (err, result) => {
         if (err) {
@@ -61,10 +57,11 @@ exports.store = async (req, res) => {
                 staff: req.body.staff,
                 phone: result.phone,
                 type: result.type,
+                active: true
             };
 
             // Encrypt account password
-            await bcrypt.hash(req.body.password, saltRounds, async (err, password) => {
+            await bcrypt.hash(req.body.password, bcrypt.genSaltSync(12), async (err, password) => {
                 if (err) {
                     console.error(err);
                     req.flash('error', "Une erreur est survenue lors de la sécurisation du mot de passe utilisateur.");

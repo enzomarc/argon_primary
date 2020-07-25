@@ -5,6 +5,9 @@ const api = express.Router();
 const configController = require('../controllers/configController');
 const staffController = require('../controllers/staffController');
 const userController = require('../controllers/userController');
+const authController = require('../controllers/authController');
+
+const authMiddleware = require('../middlewares/auth');
 
 
 // CORS Middleware
@@ -19,6 +22,10 @@ api.use((req, res, next) => {
 // Parse request body
 api.use(bodyParser.json({ strict: false }));
 api.use(bodyParser.urlencoded({ extended: false }));
+
+
+// Login routes
+api.post('/login', authController.login);
 
 // Config routes
 api.post('/config', configController.update);
