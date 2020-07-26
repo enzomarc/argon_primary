@@ -19,6 +19,6 @@ web.get('/', (req, res, next) => {
 });
 web.get('/settings', configController.show);
 web.get('/staff', staffController.index);
-web.get('/users', authMiddleware, userController.index);
+web.get('/users', userController.index);
 
 module.exports = web;

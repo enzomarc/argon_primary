@@ -40,10 +40,10 @@
                         {{#each all as |user|}}
                         <tr>
                             <td style="font-weight: bold">{{inc @index}}</td>
-                            <td style="font-weight: bold">{{user.staff.first_name}} {{user.staff.last_name}}</td>
-                            <td>{{user.staff.type}}</td>
-                            <td>{{user.staff.gender}}</td>
-                            <td>{{user.staff.phone}}</td>
+                            <td style="font-weight: bold">{{user.Staff.first_name}} {{user.Staff.last_name}}</td>
+                            <td>{{user.Staff.type}}</td>
+                            <td>{{user.Staff.gender}}</td>
+                            <td>{{user.Staff.phone}}</td>
                             <td>
                                 {{#if user.active}}
                                 <span class="badge badge-primary">Activé</span>
@@ -54,10 +54,10 @@
                             <td>
                                 <div class="btn-group mt-4 mt-md-0" role="group" aria-label="Staff actions">
                                     <button type="button" title="Activer/Désactiver le compte"
-                                        class="btn btn-primary toggle" data-user="{{user._id}}"
+                                        class="btn btn-primary toggle" data-user="{{user.id}}"
                                         data-active="{{user.active}}"><i class="bx bx-lock-open-alt"></i></button>
                                     <button type="button" title="Supprimer" class="btn btn-danger delete"
-                                        data-user="{{user._id}}"><i class="bx bx-trash"></i></a>
+                                        data-user="{{user.id}}"><i class="bx bx-trash"></i></a>
                                 </div>
                             </td>
                         </tr>
@@ -95,7 +95,7 @@
                                 <select name="staff" id="staff" class="form-control" required>
                                     <option value="">Sélectionnez le propriétaire du compte</option>
                                     {{#each staff as |single|}}
-                                    <option value="{{single._id}}">{{single.first_name}} {{single.last_name}}</option>
+                                    <option value="{{single.id}}">{{single.first_name}} {{single.last_name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
@@ -133,120 +133,7 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<!-- End add staff modal -->
-
-<!-- Edit staff modal -->
-<div class="modal fade edit-staff-modal" tabindex="-1" role="dialog" aria-labelledby="Edit staff modal"
-    style="display: none;" aria-modal="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="col-md-10">
-                    <h5 class="modal-title mt-0" id="myLargeModalLabel">Modifier un personnel</h5>
-                    <p class="card-title-desc" style="margin-bottom: 0">Remplissez tous les champs requis et cliquez sur
-                        Enregistrer.</p>
-                </div>
-
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <form id="edit-staff-form" action="/api/staff" method="post">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="first_name">Nom(s) *</label>
-                                <input type="text" class="form-control" name="first_name" id="first_name"
-                                    placeholder="Jon" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="last_name">Prénom(s)</label>
-                                <input type="text" class="form-control" name="last_name" id="last_name"
-                                    placeholder="Snow">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="birthdate">Date de naissance *</label>
-                                <input type="date" class="form-control" name="birthdate" id="birthdate"
-                                    placeholder="Jon" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="birthplace">Lieu de naissance *</label>
-                                <input type="text" class="form-control" name="birthplace" id="birthplace"
-                                    placeholder="Bertoua" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="gender">Sexe *</label>
-                                <select name="gender" id="gender" class="form-control" required>
-                                    <option value="">Sélectionnez le sexe</option>
-                                    <option value="Homme">Homme</option>
-                                    <option value="Femme">Femme</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="type">Type *</label>
-                                <select name="type" id="type" class="form-control" required>
-                                    <option value="">Sélectionnez le type de personnel</option>
-                                    <option value="Enseignant">Enseignant</option>
-                                    <option value="Directeur des études">Directeur des études</option>
-                                    <option value="Comptable">Comptable</option>
-                                    <option value="Trésorier">Trésorier</option>
-                                    <option value="Caissier">Caissier/ère</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="address">Adresse *</label>
-                                <input type="text" class="form-control" name="address" id="address"
-                                    placeholder="132 Petit Marché Odza, Yaoundé - Cameroun" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="birthdate">Téléphone</label>
-                                <input type="tel" name="phone" id="phone" class="form-control input-mask"
-                                    data-inputmask="'mask': '9', 'repeat': 15" minlength="9" maxlength="15"
-                                    placeholder="699999999" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="email">Adresse e-mail</label>
-                                <input type="email" class="form-control" name="email" id="email" placeholder="Bertoua">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="cancel" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    <button type="submit" class="btn btn-success">Enregistrer</button>
-                </div>
-            </form>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!-- End edit staff modal -->
+<!-- End add user modal -->
 
 <!-- Required datatable js -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>

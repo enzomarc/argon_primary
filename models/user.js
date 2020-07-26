@@ -1,12 +1,34 @@
-const mongoose = require('mongoose');
+'use strict';
+const {
+  Model
+} = require('sequelize');
+const db = require('./index');
 
-// Define the schema
-const schema = mongoose.Schema({
-    staff: { type: mongoose.Types.ObjectId, unique: true, required: true, ref: 'Staff' },
-    phone: { type: String, unique: true, required: true },
-    password: { type: String, required: true },
-    type: { type: String, required: true },
-    active: { type: Boolean },
-});
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      const { Staff } = models;
 
-module.exports = mongoose.model('User', schema);
+      User.Staff = User.belongsTo(Staff, { foreignKey: 'staff' });
+    }
+  };
+  User.init({
+    staff: { type: DataTypes.INTEGER, unique: true, allowNull: false },
+    phone: { type: DataTypes.STRING, unique: true, allowNull: false },
+    password: { type: DataTypes.STRING, allowNull: false },
+    type: { type: DataTypes.STRING, allowNull: false },
+    active: { type: DataTypes.BOOLEAN, defaultValue: true }
+  }, {
+    sequelize,
+    modelName: 'User',
+    tableName: 'users'
+  });
+
+  return User;
+};
+

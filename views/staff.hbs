@@ -53,11 +53,11 @@
                             <td>
                                 <div class="btn-group mt-4 mt-md-0" role="group" aria-label="Staff actions">
                                     <button type="button" title="Visualiser" class="btn btn-primary show"
-                                        data-staff="{{staff._id}}"><i class="bx bxs-show"></i></button>
+                                        data-staff="{{staff.id}}"><i class="bx bxs-show"></i></button>
                                     <button type="button" title="Modifier" class="btn btn-primary edit"
-                                        data-staff="{{staff._id}}"><i class="bx bx-edit-alt"></i></button>
+                                        data-staff="{{staff.id}}"><i class="bx bx-edit-alt"></i></button>
                                     <button type="button" title="Supprimer" class="btn btn-danger delete"
-                                        data-staff="{{staff._id}}"><i class="bx bx-trash"></i></button>
+                                        data-staff="{{staff.id}}"><i class="bx bx-trash"></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -368,7 +368,7 @@
                 $('.edit-staff-modal #gender').find('option[value="' + staff.gender + '"]')[0].selected = true
                 $('.edit-staff-modal #type').find('option[value="' + staff.type + '"]')[0].selected = true
 
-                $('#edit-staff-form')[0].action = '/api/staff/' + staff._id + '/update';
+                $('#edit-staff-form')[0].action = '/api/staff/' + staff.id + '/update';
                 enableInput();
 
                 $('.edit-staff-modal').modal('show');
@@ -424,15 +424,15 @@
                 $.ajax({
                     url: '/api/staff/' + staff_id + '/delete',
                     method: 'GET',
-                    success: () => {
-                        Swal.fire('Suppression effectuée', 'Le personnel a été supprimé avec succès.', 'success');
+                    success: (res) => {
+                        Swal.fire('Suppression effectuée', res.message, 'success');
                         setTimeout(() => {
                             window.location.reload();
                         }, 2000);
                     },
                     error: (err) => {
                         console.error(err);
-                        Swal.fire('Erreur de suppression', 'Une erreur est survenue lors de la suppression du personnel.', 'error');
+                        Swal.fire('Erreur de suppression', err.responseJSON.message, 'error');
                     }
                 });
             }

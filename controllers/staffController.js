@@ -40,7 +40,7 @@ exports.index = async (req, res) => {
 exports.show = async (req, res) => {
     const id = req.params.id;
 
-    await db.Staff.findOne({ id: id })
+    await db.Staff.findOne({ where: { id: id } })
         .then((staff) => {
             return res.json(staff);
         })
@@ -87,23 +87,20 @@ exports.store = async (req, res) => {
 exports.update = async (req, res) => {
     const id = req.params.id;
     await db.Staff.findOne({ where: { id: id } })
-        .then((staff) => {
+        .then(async (staff) => {
             if (staff != null) {
-                staff.save();
-                // TODO: Check and continue here
+                await staff.update(req.body, { where: { id: id } })
+                    .then(() => {
+                        req.flash('success', "Le personnel a été modifié avec succès.");
+                        res.redirect('/staff');
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        req.flash('error', "Une erreur est survenue lors de la mise à jour du personnel.");
+                        return res.status(500).redirect('/staff');
+                    });
             }
-        })
-
-    await Staff.findOneAndUpdate({ _id: id }, req.body, (err, result) => {
-        if (err) {
-            console.log(err);
-            req.flash('error', "Une erreur est survenue lors de la mise à jour du personnel.");
-            return res.status(500).redirect('/staff');
-        }
-
-        req.flash('success', "Le personnel a été modifié avec succès.");
-        res.redirect('/staff');
-    });
+        });
 };
 
 /**
@@ -116,16 +113,26 @@ exports.delete = async (req, res, next) => {
     const id = req.params.id;
 
     // TODO: Delete staff related
-    await Staff.findOneAndDelete({ _id: id }, async (err, result) => {
-        if (err) {
-            console.log(err);
-            req.flash('error', "Une erreur est survenue lors de la suppression du personnel.");
-            return res.status(500).redirect('/staff');
-        }
+    await db.Staff.findOne({ where: { id: id } })
+        .then(async (staff) => {
+            if (staff != null) {
+                await staff.destroy()
+                    .then(async () => {
+                        try {
+                            // Find and delete staff user account
+                            await db.User.findOne({ where: { staff: id } })
+                                .then(async (user) => {
+                                    await user.destroy();
+                                })
+                                .catch((err) => console.error(err));
+                        } catch (err) { console.error(err) }
 
-        // Delete staff user account
-        await User.findOneAndDelete({ staff: id });
-
-        res.json({ message: "Le personnel a été supprimé avec succès." });
-    });
+                        res.json({ message: "Le personnel a été supprimé avec succès." });
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        return res.status(500).json({ message: "Une erreur est survenue lors de la suppression du personnel." });
+                    });
+            }
+        });
 };
