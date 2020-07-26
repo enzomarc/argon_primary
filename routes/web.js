@@ -4,21 +4,23 @@ const web = express.Router();
 const configController = require('../controllers/configController');
 const staffController = require('../controllers/staffController');
 const userController = require('../controllers/userController');
+const authController = require('../controllers/webAuthController');
 
 
-const authMiddleware = require('../middlewares/auth');
+const authMiddleware = require('../middlewares/auth_web');
 
 
 // Routes
-web.get('/login', (req, res, next) => {
-  res.render('login', { layout: false });
-});
+web.get('/login', authController.page);
 
-web.get('/', (req, res, next) => {
+web.post('/login/:token', authController.login);
+
+web.get('/', authMiddleware, (req, res, next) => {
   res.render('index', { layout: 'main', title: 'Tableau de bord' });
 });
-web.get('/settings', configController.show);
+
+web.get('/settings', authMiddleware, configController.show);
 web.get('/staff', authMiddleware, staffController.index);
-web.get('/users', userController.index);
+web.get('/users', authMiddleware, userController.index);
 
 module.exports = web;

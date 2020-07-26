@@ -3,6 +3,7 @@ const {
   Model
 } = require('sequelize');
 const db = require('./index');
+const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -16,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
 
       User.Staff = User.belongsTo(Staff, { foreignKey: 'staff' });
     }
+
+    validPassword(password) {
+      return bcrypt.compareSync(password, this.password);
+    }
   };
   User.init({
     staff: { type: DataTypes.INTEGER, unique: true, allowNull: false },
@@ -27,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'User',
     tableName: 'users'
+  });
+
+  User.beforeCreate('hashPassword', (user) => {
+    const salt = bcrypt.genSaltSync(12);
+    user.password = bcrypt.hashSync(user.password, salt);
   });
 
   return User;

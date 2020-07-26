@@ -315,6 +315,9 @@
 <script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
 
 <script>
+  const cookies = document.cookie.split(';');
+  console.log(cookies);
+
   const disableInput = () => {
     const input = $('#edit-staff-form').find('input');
     const select = $('#edit-staff-form').find('select');

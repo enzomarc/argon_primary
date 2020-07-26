@@ -24,6 +24,7 @@
     "mongoose": "^5.9.25",
     "mysql2": "^2.1.0",
     "nodemon": "^2.0.4",
+    "request": "^2.88.2",
     "sequelize": "^6.3.3"
   },
   "engines": {

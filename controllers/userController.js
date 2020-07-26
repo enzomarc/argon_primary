@@ -51,30 +51,20 @@ exports.store = async (req, res) => {
           staff: req.body.staff,
           phone: result.phone,
           type: result.type,
+          password: req.body.password,
           active: true
         };
 
-        // Hash account password
-        await bcrypt.hash(req.body.password, bcrypt.genSaltSync(12), async (err, password) => {
-          if (err) {
+        await User.create(data)
+          .then(() => {
+            req.flash('success', "Le compte utilisateur a été ouvert avec succès. Le mot de passe a été envoyé par SMS au propriétaire du compte.");
+            return res.status(201).redirect('/users');
+          })
+          .catch((err) => {
             console.error(err);
-            req.flash('error', "Une erreur est survenue lors de la sécurisation du mot de passe utilisateur.");
+            req.flash('error', "Une erreur est survenue lors de la création du compte utilisateur. Veuillez contacter un administrateur.");
             return res.status(500).redirect('/users');
-          }
-
-          data['password'] = password;
-
-          await User.create(data)
-            .then(() => {
-              req.flash('success', "Le compte utilisateur a été ouvert avec succès. Le mot de passe a été envoyé par SMS au propriétaire du compte.");
-              return res.status(201).redirect('/users');
-            })
-            .catch((err) => {
-              console.error(err);
-              req.flash('error', "Une erreur est survenue lors de la création du compte utilisateur. Veuillez contacter un administrateur.");
-              return res.status(500).redirect('/users');
-            })
-        });
+          });
       } else {
         req.flash('error', "Impossible d'obtenir les informations du personnel sélectionné, il a propablement été supprimé. Veuillez contacter un administrateur.");
         return res.status(500).redirect('/users');

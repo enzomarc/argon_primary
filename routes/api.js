@@ -23,22 +23,34 @@ api.use((req, res, next) => {
 api.use(bodyParser.json({ strict: false }));
 api.use(bodyParser.urlencoded({ extended: false }));
 
+// Automatically set authorization header from session if user logged in
+api.use((req, res, next) => {
+  if (req.session.user && req.cookies.access_token) {
+    const token = req.cookies.access_token;
+    req.headers.authorization = token;
+    res.setHeader('authorization', token);
+  }
+
+  next();
+});
+
 
 // Login routes
-api.post('/login', authController.login);
+api.post('/auth', authController.auth);
+api.get('/auth/verify/:token', authController.verify);
 
 // Config routes
-api.post('/config', configController.update);
+api.post('/config', authMiddleware, configController.update);
 
 // Staff routes
-api.post('/staff', staffController.store);
-api.get('/staff/:id', staffController.show);
-api.post('/staff/:id/update', staffController.update);
-api.get('/staff/:id/delete', staffController.delete);
+api.post('/staff', authMiddleware, staffController.store);
+api.get('/staff/:id', authMiddleware, staffController.show);
+api.post('/staff/:id/update', authMiddleware, staffController.update);
+api.get('/staff/:id/delete', authMiddleware, staffController.delete);
 
 // User routes
-api.post('/users', userController.store);
-api.post('/users/:id/toggle', userController.toggle);
-api.get('/users/:id/delete', userController.delete);
+api.post('/users', authMiddleware, userController.store);
+api.post('/users/:id/toggle', authMiddleware, userController.toggle);
+api.get('/users/:id/delete', authMiddleware, userController.delete);
 
 module.exports = api;

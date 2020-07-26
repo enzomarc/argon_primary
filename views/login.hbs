@@ -8,14 +8,15 @@
     <meta content="Argon connexion" name="description" />
     <meta content="Licon Corp" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
 
     <!-- Bootstrap Css -->
-    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
     <!-- Icons Css -->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/toastr.min.css" rel="stylesheet" type="text/css" />
     <!-- App Css-->
-    <link href="assets/css/app.css" id="app-style" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/app.css" id="app-style" rel="stylesheet" type="text/css" />
 
   </head>
 
@@ -31,23 +32,23 @@
                   <h5 class="text-white font-size-20">Bon retour!</h5>
                   <p class="text-white-50 mb-0">Connectez vous pour continuer sur Argon.</p>
                   <a href="index.html" class="logo logo-admin mt-4">
-                    <img src="assets/images/logo-sm-dark.png" alt="" height="30">
+                    <img src="/assets/images/logo-sm-dark.png" alt="" height="30">
                   </a>
                 </div>
               </div>
               <div class="card-body pt-5">
                 <div class="p-2">
-                  <form class="form-horizontal" action="/">
+                  <form class="form-horizontal" id="login-form">
 
                     <div class="form-group">
-                      <label for="username">Numéro de téléphone</label>
-                      <input type="tel" class="form-control" id="username" placeholder="699999999">
+                      <label for="phone">Numéro de téléphone</label>
+                      <input type="tel" class="form-control input-mask" data-inputmask="'mask': '9', 'repeat': 15"
+                        minlength="9" maxlength="15" id="phone" placeholder="699999999">
                     </div>
 
                     <div class="form-group">
-                      <label for="userpassword">Mot de passe</label>
-                      <input type="password" class="form-control" id="userpassword"
-                        placeholder="Entrez le mot de passe">
+                      <label for="password">Mot de passe</label>
+                      <input type="password" class="form-control" id="password" placeholder="Entrez le mot de passe">
                     </div>
 
                     <div class="custom-control custom-checkbox">
@@ -57,12 +58,12 @@
                     </div>
 
                     <div class="mt-3">
-                      <button class="btn btn-primary btn-block waves-effect waves-light" type="submit">Se
+                      <button class="btn btn-primary btn-block waves-effect waves-light" id="login-btn" type="button">Se
                         connecter</button>
                     </div>
 
                     <div class="mt-4 text-center">
-                      <a href="pages-recoverpw.html" class="text-muted"><i class="mdi mdi-lock mr-1"></i> Mot de passe
+                      <a href="/recover" class="text-muted"><i class="mdi mdi-lock mr-1"></i> Mot de passe
                         oublié?</a>
                     </div>
                   </form>
@@ -71,7 +72,7 @@
               </div>
             </div>
             <div class="mt-5 text-center">
-              <p>Pas encore inscrit ? <a href="pages-register.html" class="font-weight-medium text-primary">
+              <p>Pas encore inscrit ? <a href="/register" class="font-weight-medium text-primary">
                   Obtenir Argon</a> </p>
               <p>© 2020 Mveng Engineering. Crafted with <i class="mdi mdi-heart text-danger"></i> by Licon
                 Corp</p>
@@ -83,13 +84,47 @@
     </div>
 
     <!-- JAVASCRIPT -->
-    <script src="assets/libs/jquery/jquery.min.js"></script>
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
-    <script src="assets/libs/simplebar/simplebar.min.js"></script>
-    <script src="assets/libs/node-waves/waves.min.js"></script>
+    <script src="/assets/libs/jquery/jquery.min.js"></script>
+    <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="/assets/libs/node-waves/waves.min.js"></script>
+    <script src="/assets/libs/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+    <script src="/assets/libs/toastr.min.js"></script>
+    <script src="/assets/js/pages/form-mask.init.js"></script>
 
-    <script src="assets/js/app.js"></script>
+    <script src="/assets/js/app.js"></script>
+    <script>
+      $('#login-btn').click(function () {
+        const phone = $('#phone').val();
+        const password = $('#password').val();
+        toastr.options.progressBar = true;
+        toastr.options.positionClass = "toast-bottom-full-width";
+
+        $.ajax({
+          url: '/api/auth',
+          method: 'POST',
+          data: { phone: phone, password: password },
+          success: (response) => {
+            console.log(response);
+
+            $.ajax({
+              url: '/login/' + response.access_token,
+              method: 'POST',
+              success: () => {
+                window.location.replace('/');
+              },
+              error: (err) => {
+                toastr.error(err.responseJSON.message, "Erreur");
+              }
+            })
+          },
+          error: (err) => {
+            toastr.error(err.responseJSON.message, "Erreur");
+          }
+        })
+      });
+    </script>
 
   </body>
 
