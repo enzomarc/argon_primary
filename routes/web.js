@@ -12,6 +12,7 @@ const authMiddleware = require('../middlewares/auth_web');
 
 // Routes
 web.get('/login', authController.page);
+web.get('/logout', authController.logout);
 
 web.post('/login/:token', authController.login);
 

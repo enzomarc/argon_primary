@@ -35,3 +35,9 @@ exports.page = (req, res) => {
     return res.render('login', { layout: false });
   }
 }
+
+exports.logout = (req, res) => {
+  req.session.destroy();
+  res.clearCookie('access_token');
+  return res.redirect('/login');
+}
