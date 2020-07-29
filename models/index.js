@@ -17,7 +17,8 @@ if (config.use_env_variable) {
 const db = {
   Config: require('./config')(sequelize, Sequelize.DataTypes),
   Staff: require('./staff')(sequelize, Sequelize.DataTypes),
-  User: require('./user')(sequelize, Sequelize.DataTypes)
+  User: require('./user')(sequelize, Sequelize.DataTypes),
+  Classroom: require('./classroom')(sequelize, Sequelize.DataTypes),
 };
 
 Object.keys(db).forEach(modelName => {

@@ -5,9 +5,12 @@ const configController = require('../controllers/configController');
 const staffController = require('../controllers/staffController');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/webAuthController');
+const classroomController = require('../controllers/classroomController');
 
 
+// Middlewares
 const authMiddleware = require('../middlewares/auth_web');
+const studyDirector = require('../middlewares/study_director');
 
 
 // Routes
@@ -20,8 +23,13 @@ web.get('/', authMiddleware, (req, res, next) => {
   res.render('index', { layout: 'main', title: 'Tableau de bord' });
 });
 
+// System
 web.get('/settings', authMiddleware, configController.show);
 web.get('/staff', authMiddleware, staffController.index);
 web.get('/users', authMiddleware, userController.index);
+
+
+// Studies Director
+web.get('/classrooms', authMiddleware, studyDirector, classroomController.index);
 
 module.exports = web;

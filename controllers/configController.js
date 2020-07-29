@@ -1,4 +1,4 @@
-const Config = require('../models/index').Config;
+const { Config } = require('../models/index');
 
 /**
  * Update establishment settings.

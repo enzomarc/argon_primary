@@ -1,4 +1,4 @@
-const db = require('../models/index');
+const { Staff, User } = require('../models/index');
 
 /**
  * Show establishment staff list.
@@ -18,7 +18,7 @@ exports.index = async (req, res) => {
     error: error
   };
 
-  await db.Staff.findAll()
+  await Staff.findAll()
     .then((result) => {
       staff = result;
       _populated = staff.length > 0;
@@ -40,7 +40,7 @@ exports.index = async (req, res) => {
 exports.show = async (req, res) => {
   const id = req.params.id;
 
-  await db.Staff.findOne({ where: { id: id } })
+  await Staff.findOne({ where: { id: id } })
     .then((staff) => {
       return res.json(staff);
     })
@@ -57,13 +57,13 @@ exports.show = async (req, res) => {
  * @param {*} res
  */
 exports.store = async (req, res) => {
-  await db.Staff.findOne({ where: { phone: req.body.phone } })
+  await Staff.findOne({ where: { phone: req.body.phone } })
     .then(async (result) => {
       if (result != null) {
         req.flash('error', "Un personnel avec les mêmes informations existe déja.");
         return res.redirect('/staff');
       } else {
-        const staff = new db.Staff(req.body);
+        const staff = new Staff(req.body);
         await staff.save()
           .then(() => {
             req.flash('success', "Personnel ajouté avec succès.");
@@ -86,7 +86,7 @@ exports.store = async (req, res) => {
  */
 exports.update = async (req, res) => {
   const id = req.params.id;
-  await db.Staff.findOne({ where: { id: id } })
+  await Staff.findOne({ where: { id: id } })
     .then(async (staff) => {
       if (staff != null) {
         await staff.update(req.body, { where: { id: id } })
@@ -113,14 +113,14 @@ exports.delete = async (req, res, next) => {
   const id = req.params.id;
 
   // TODO: Delete staff related
-  await db.Staff.findOne({ where: { id: id } })
+  await Staff.findOne({ where: { id: id } })
     .then(async (staff) => {
       if (staff != null) {
         await staff.destroy()
           .then(async () => {
             try {
               // Find and delete staff user account
-              await db.User.findOne({ where: { staff: id } })
+              await User.findOne({ where: { staff: id } })
                 .then(async (user) => {
                   await user.destroy();
                 })

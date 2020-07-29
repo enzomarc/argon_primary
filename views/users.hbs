@@ -107,7 +107,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="password">Mot de passe</label>
+                <label for="password">Mot de passe *</label>
                 <div class="row">
                   <div class="col-md-7">
                     <input type="password" class="form-control" name="password" id="password"
@@ -186,7 +186,7 @@
 
   const generate = (length) => {
     var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var characters = '0123456789';
     var charactersLength = characters.length;
     for (var i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -195,7 +195,7 @@
   }
 
   $('.pwd-gen').click(() => {
-    $('#password').val(generate(10));
+    $('#password').val(generate(6));
   });
 
   $('.show-pwd').click(() => {

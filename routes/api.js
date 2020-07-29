@@ -6,8 +6,10 @@ const configController = require('../controllers/configController');
 const staffController = require('../controllers/staffController');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+const classroomController = require('../controllers/classroomController');
 
 const authMiddleware = require('../middlewares/auth');
+const studyDirector = require('../middlewares/study_director');
 
 
 // CORS Middleware
@@ -52,5 +54,8 @@ api.get('/staff/:id/delete', authMiddleware, staffController.delete);
 api.post('/users', authMiddleware, userController.store);
 api.post('/users/:id/toggle', authMiddleware, userController.toggle);
 api.get('/users/:id/delete', authMiddleware, userController.delete);
+
+// Classrooms routes
+api.post('/classrooms', authMiddleware, studyDirector, classroomController.store);
 
 module.exports = api;

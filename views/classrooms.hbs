@@ -1,0 +1,314 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-10">
+            <h4 class="card-title">Liste des salles de classes de l'établissement</h4>
+            {{#if populated}}
+              <p class="card-title-desc">Visualisez la liste des salles de classes de l'établissement, n'hésitez pas à
+                cliquer sur les colonnes pour les organiser.</p>
+            {{else}}
+              <p class="card-title-desc">Aucune salle de classe disponible. Cliquez sur le bouton "Ajouter" pour créer
+                une nouvelle salle de classe.</p>
+            {{/if}}
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary float-right" data-toggle="modal" data-target=".add-classroom-modal"><i
+                class="bx bx-user-plus mr-2"></i>Ajouter</button>
+          </div>
+        </div>
+
+        {{> messages}}
+
+        {{#if populated}}
+          <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap"
+            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Niveau</th>
+                <th>Libellé de la classe</th>
+                <th>Cycle</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {{#each all as |classroom|}}
+                <tr>
+                  <td style="font-weight: bold">{{inc @index}}</td>
+                  <td style="font-weight: bold">{{classroom.level}}</td>
+                  <td>{{classroom.label}}</td>
+                  <td>{{classroom.cycle}}</td>
+                  <td>
+                    <div class="btn-group mt-4 mt-md-0" role="group" aria-label="Staff actions">
+                      <button type="button" title="Modifier" class="btn btn-primary edit" data-user="{{classroom.id}}"
+                        data-active="{{user.active}}"><i class="bx bx-edit-alt"></i></button>
+                      <button type="button" title="Supprimer" class="btn btn-danger delete"
+                        data-user="{{classroom.id}}"><i class="bx bx-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add classroom modal -->
+<div class="modal fade add-classroom-modal" tabindex="-1" role="dialog" aria-labelledby="Add classroom modal"
+  style="display: none;" aria-modal="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="col-md-10">
+          <h5 class="modal-title mt-0" id="myLargeModalLabel">Ajouter une salle de classe</h5>
+          <p class="card-title-desc" style="margin-bottom: 0">Remplissez tous les champs et cliquez sur
+            <b>Enregistrer</b></p>
+        </div>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <form action="/api/classrooms" method="post">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="label">Libellé de la classe *</label>
+                <input type="text" class="form-control" name="label" id="label" placeholder="SIL A" required>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="password">Niveau *</label>
+                <select name="level" id="level" class="form-control" required>
+                  <option value="">Sélectionnez le niveau de la classe</option>
+                  <option value="1">Niveau 1</option>
+                  <option value="2">Niveau 2</option>
+                  <option value="3">Niveau 3</option>
+                  <option value="4">Niveau 4</option>
+                  <option value="5">Niveau 5</option>
+                  <option value="6">Niveau 6</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="password">Section *</label>
+                <select name="cycle" id="cycle" class="form-control" required>
+                  <option value="">Sélectionnez la section</option>
+                  <option value="FR">Section Francophone</option>
+                  <option value="EN">Section Anglophone</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="cancel" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-success">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- End add user modal -->
+
+<!-- Required datatable js -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="/assets/libs/jszip/jszip.min.js"></script>
+<script src="/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+<script src="/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+<script src="/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+
+
+<script>
+  let pwd_visible = false;
+
+  const disableInput = () => {
+    const input = $('#edit-staff-form').find('input');
+    const select = $('#edit-staff-form').find('select');
+
+    for (item of input) {
+      item.disabled = true;
+    }
+
+    for (item of select) {
+      item.disabled = true;
+    }
+  };
+
+  const enableInput = () => {
+    const input = $('#edit-staff-form').find('input');
+    const select = $('#edit-staff-form').find('select');
+
+    for (item of input) {
+      item.disabled = false;
+    }
+
+    for (item of select) {
+      item.disabled = false;
+    }
+  };
+
+  const generate = (length) => {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
+  $('.pwd-gen').click(() => {
+    $('#password').val(generate(10));
+  });
+
+  $('.show-pwd').click(() => {
+    if (!pwd_visible)
+      $('#password')[0].type = 'text';
+    else
+      $('#password')[0].type = 'password';
+
+    pwd_visible = !pwd_visible;
+  });
+
+  // Init DataTable
+  $('table').DataTable({ lengthChange: !1, buttons: ["copy", "excel", "pdf"] }).buttons().container().appendTo("#datatable-buttons_wrapper .col-md-6:eq(0)");
+
+  $('.toggle').click(function () {
+    const that = $(this);
+    const user_id = that[0].dataset['user'];
+    const parent = that.parent().parent().parent();
+    const badge = parent.find('span.badge');
+    const active = that[0].dataset['active'] === "true";
+
+    $.ajax({
+      method: 'POST',
+      url: '/api/users/' + user_id + '/toggle',
+      data: { active: !active },
+      success: (state) => {
+        console.log(state);
+        that[0].dataset['active'] = state.toString();
+
+        if (!active == true) {
+          badge.removeClass('badge-danger').addClass('badge-primary').text('Activé');
+        } else {
+          badge.removeClass('badge-primary').addClass('badge-danger').text('Désactivé');
+        }
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  });
+
+  $('.edit').click(function () {
+    const staff_id = $(this)[0].dataset['staff'];
+
+    $.ajax({
+      method: 'GET',
+      url: '/api/staff/' + staff_id,
+      success: (staff) => {
+        $('.edit-staff-modal #first_name').val(staff.first_name);
+        $('.edit-staff-modal #last_name').val(staff.last_name);
+        $('.edit-staff-modal #birthdate').val(moment(staff.birthdate).format('YYYY-MM-DD'));
+        $('.edit-staff-modal #birthplace').val(staff.birthplace);
+        $('.edit-staff-modal #address').val(staff.address);
+        $('.edit-staff-modal #phone').val(staff.phone);
+        $('.edit-staff-modal #email').val(staff.email);
+
+        $('.edit-staff-modal #gender').find('option[value="' + staff.gender + '"]')[0].selected = true
+        $('.edit-staff-modal #type').find('option[value="' + staff.type + '"]')[0].selected = true
+
+        $('#edit-staff-form')[0].action = '/api/staff/' + staff._id + '/update';
+        enableInput();
+
+        $('.edit-staff-modal').modal('show');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  });
+
+  $('.show').click(function () {
+    const staff_id = $(this)[0].dataset['staff'];
+
+    $.ajax({
+      method: 'GET',
+      url: '/api/staff/' + staff_id,
+      success: (staff) => {
+        $('.edit-staff-modal #first_name').val(staff.first_name);
+        $('.edit-staff-modal #last_name').val(staff.last_name);
+        $('.edit-staff-modal #birthdate').val(moment(staff.birthdate).format('YYYY-MM-DD'));
+        $('.edit-staff-modal #birthplace').val(staff.birthplace);
+        $('.edit-staff-modal #address').val(staff.address);
+        $('.edit-staff-modal #phone').val(staff.phone);
+        $('.edit-staff-modal #email').val(staff.email);
+
+        $('.edit-staff-modal #gender').find('option[value="' + staff.gender + '"]')[0].selected = true
+        $('.edit-staff-modal #type').find('option[value="' + staff.type + '"]')[0].selected = true
+
+        disableInput();
+
+        $('.edit-staff-modal').modal('show');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  });
+
+  $('.delete').click(function () {
+    const user_id = $(this)[0].dataset['user'];
+
+    Swal.fire({
+      title: 'Confirmation de suppression',
+      text: "Êtes vous sûr de vouloir supprimer cet utilisateur?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#45cb85',
+      cancelButtonColor: '#9095ad',
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          url: '/api/users/' + user_id + '/delete',
+          method: 'GET',
+          success: (res) => {
+            Swal.fire('Suppression effectuée', res.message, 'success');
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire('Erreur de suppression', err.responseJSON.message, 'error');
+          }
+        });
+      }
+    });
+  });
+</script>
