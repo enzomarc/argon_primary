@@ -16,7 +16,6 @@ const studyDirector = require('../middlewares/study_director');
 // Routes
 web.get('/login', authController.page);
 web.get('/logout', authController.logout);
-
 web.post('/login/:token', authController.login);
 
 web.get('/', authMiddleware, (req, res, next) => {

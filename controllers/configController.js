@@ -53,7 +53,7 @@ exports.update = async (req, res, next) => {
 exports.show = async (req, res, next) => {
   await Config.findOne()
     .then((conf) => {
-      res.render('settings', { title: 'Paramétrage', config: conf });
+      res.render('system/settings', { title: 'Paramétrage', config: conf });
     })
     .catch((err) => {
       req.flash('error', "Une erreur est survenue lors de l'obtention des paramètres de votre établissement.");

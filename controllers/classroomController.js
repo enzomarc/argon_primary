@@ -28,7 +28,7 @@ exports.index = async (req, res) => {
       req.flash('error', "Une erreur est survenue lors de la récupération de la liste du personnel.");
     });
 
-  res.render('classrooms', { layout: 'main', title: 'Salles de classes', all: classrooms, populated: _populated, messages: _messages });
+  res.render('studies/classrooms', { layout: 'main', title: 'Salles de classes', all: classrooms, populated: _populated, messages: _messages });
 }
 
 /**

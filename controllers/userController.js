@@ -1,6 +1,12 @@
 const bcrypt = require('bcrypt');
 const { User, Staff } = require('../models/index');
 
+/**
+ * Show all users.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.index = async (req, res) => {
   const error = req.flash('error');
   const info = req.flash('info');
@@ -28,7 +34,7 @@ exports.index = async (req, res) => {
           .catch((err) => console.error(err));
       });
 
-      return res.render('users', { layout: 'main', title: 'Utilisateurs', staff: _staff, all: users, populated: _populated, messages: _messages });
+      return res.render('system/users', { layout: 'main', title: 'Utilisateurs', staff: _staff, all: users, populated: _populated, messages: _messages });
     })
     .catch((err) => {
       console.error(err);
@@ -37,10 +43,12 @@ exports.index = async (req, res) => {
     });
 };
 
-exports.show = async (req, res) => {
-
-}
-
+/**
+ * Create new user.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.store = async (req, res) => {
   const _staff = req.body.staff;
 
@@ -77,6 +85,12 @@ exports.store = async (req, res) => {
     });
 }
 
+/**
+ * Toggle user active state.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.toggle = async (req, res) => {
   const user_id = req.params.id;
 
