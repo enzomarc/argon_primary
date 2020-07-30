@@ -29,7 +29,7 @@
                 <th>#</th>
                 <th>Niveau</th>
                 <th>Libellé de la classe</th>
-                <th>Cycle</th>
+                <th>Section</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -40,13 +40,13 @@
                   <td style="font-weight: bold">{{inc @index}}</td>
                   <td style="font-weight: bold">{{classroom.level}}</td>
                   <td>{{classroom.label}}</td>
-                  <td>{{classroom.cycle}}</td>
+                  <td>{{sectr classroom.cycle}}</td>
                   <td>
                     <div class="btn-group mt-4 mt-md-0" role="group" aria-label="Staff actions">
-                      <button type="button" title="Modifier" class="btn btn-primary edit" data-user="{{classroom.id}}"
-                        data-active="{{user.active}}"><i class="bx bx-edit-alt"></i></button>
+                      <button type="button" title="Modifier" class="btn btn-primary edit"
+                        data-classroom="{{classroom.id}}"><i class="bx bx-edit-alt"></i></button>
                       <button type="button" title="Supprimer" class="btn btn-danger delete"
-                        data-user="{{classroom.id}}"><i class="bx bx-trash"></i></a>
+                        data-classroom="{{classroom.id}}"><i class="bx bx-trash"></i></a>
                     </div>
                   </td>
                 </tr>
@@ -122,7 +122,72 @@
   </div>
   <!-- /.modal-dialog -->
 </div>
-<!-- End add user modal -->
+<!-- End add classroom modal -->
+
+<!-- Edit classroom modal -->
+<div class="modal fade edit-classroom-modal" tabindex="-1" role="dialog" aria-labelledby="Edit classroom modal"
+  style="display: none;" aria-modal="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="col-md-10">
+          <h5 class="modal-title mt-0" id="myLargeModalLabel">Ajouter une salle de classe</h5>
+          <p class="card-title-desc" style="margin-bottom: 0">Remplissez tous les champs et cliquez sur
+            <b>Enregistrer</b></p>
+        </div>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <form id="edit-classroom-form" action="/api/classrooms" method="post">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="label">Libellé de la classe *</label>
+                <input type="text" class="form-control" name="label" id="label" placeholder="SIL A" required>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="password">Niveau *</label>
+                <select name="level" id="level" class="form-control" required>
+                  <option value="">Sélectionnez le niveau de la classe</option>
+                  <option value="1">Niveau 1</option>
+                  <option value="2">Niveau 2</option>
+                  <option value="3">Niveau 3</option>
+                  <option value="4">Niveau 4</option>
+                  <option value="5">Niveau 5</option>
+                  <option value="6">Niveau 6</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="password">Section *</label>
+                <select name="cycle" id="cycle" class="form-control" required>
+                  <option value="">Sélectionnez la section</option>
+                  <option value="FR">Section Francophone</option>
+                  <option value="EN">Section Anglophone</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="cancel" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-success">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- End edit classroom modal -->
 
 <!-- Required datatable js -->
 <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -142,137 +207,23 @@
 
 
 <script>
-  let pwd_visible = false;
-
-  const disableInput = () => {
-    const input = $('#edit-staff-form').find('input');
-    const select = $('#edit-staff-form').find('select');
-
-    for (item of input) {
-      item.disabled = true;
-    }
-
-    for (item of select) {
-      item.disabled = true;
-    }
-  };
-
-  const enableInput = () => {
-    const input = $('#edit-staff-form').find('input');
-    const select = $('#edit-staff-form').find('select');
-
-    for (item of input) {
-      item.disabled = false;
-    }
-
-    for (item of select) {
-      item.disabled = false;
-    }
-  };
-
-  const generate = (length) => {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
-
-  $('.pwd-gen').click(() => {
-    $('#password').val(generate(10));
-  });
-
-  $('.show-pwd').click(() => {
-    if (!pwd_visible)
-      $('#password')[0].type = 'text';
-    else
-      $('#password')[0].type = 'password';
-
-    pwd_visible = !pwd_visible;
-  });
-
   // Init DataTable
   $('table').DataTable({ lengthChange: !1, buttons: ["copy", "excel", "pdf"] }).buttons().container().appendTo("#datatable-buttons_wrapper .col-md-6:eq(0)");
 
-  $('.toggle').click(function () {
-    const that = $(this);
-    const user_id = that[0].dataset['user'];
-    const parent = that.parent().parent().parent();
-    const badge = parent.find('span.badge');
-    const active = that[0].dataset['active'] === "true";
-
-    $.ajax({
-      method: 'POST',
-      url: '/api/users/' + user_id + '/toggle',
-      data: { active: !active },
-      success: (state) => {
-        console.log(state);
-        that[0].dataset['active'] = state.toString();
-
-        if (!active == true) {
-          badge.removeClass('badge-danger').addClass('badge-primary').text('Activé');
-        } else {
-          badge.removeClass('badge-primary').addClass('badge-danger').text('Désactivé');
-        }
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
-  });
-
   $('.edit').click(function () {
-    const staff_id = $(this)[0].dataset['staff'];
+    const classroom_id = $(this)[0].dataset['classroom'];
 
     $.ajax({
       method: 'GET',
-      url: '/api/staff/' + staff_id,
-      success: (staff) => {
-        $('.edit-staff-modal #first_name').val(staff.first_name);
-        $('.edit-staff-modal #last_name').val(staff.last_name);
-        $('.edit-staff-modal #birthdate').val(moment(staff.birthdate).format('YYYY-MM-DD'));
-        $('.edit-staff-modal #birthplace').val(staff.birthplace);
-        $('.edit-staff-modal #address').val(staff.address);
-        $('.edit-staff-modal #phone').val(staff.phone);
-        $('.edit-staff-modal #email').val(staff.email);
+      url: '/api/classrooms/' + classroom_id,
+      success: (classroom) => {
+        $('.edit-classroom-modal #label').val(classroom.label);
+        $('.edit-classroom-modal #level').find('option[value="' + classroom.level + '"]')[0].selected = true
+        $('.edit-classroom-modal #cycle').find('option[value="' + classroom.cycle + '"]')[0].selected = true
 
-        $('.edit-staff-modal #gender').find('option[value="' + staff.gender + '"]')[0].selected = true
-        $('.edit-staff-modal #type').find('option[value="' + staff.type + '"]')[0].selected = true
+        $('#edit-classroom-form')[0].action = '/api/classrooms/' + classroom.id + '/update';
 
-        $('#edit-staff-form')[0].action = '/api/staff/' + staff._id + '/update';
-        enableInput();
-
-        $('.edit-staff-modal').modal('show');
-      },
-      error: (err) => {
-        console.error(err);
-      }
-    });
-  });
-
-  $('.show').click(function () {
-    const staff_id = $(this)[0].dataset['staff'];
-
-    $.ajax({
-      method: 'GET',
-      url: '/api/staff/' + staff_id,
-      success: (staff) => {
-        $('.edit-staff-modal #first_name').val(staff.first_name);
-        $('.edit-staff-modal #last_name').val(staff.last_name);
-        $('.edit-staff-modal #birthdate').val(moment(staff.birthdate).format('YYYY-MM-DD'));
-        $('.edit-staff-modal #birthplace').val(staff.birthplace);
-        $('.edit-staff-modal #address').val(staff.address);
-        $('.edit-staff-modal #phone').val(staff.phone);
-        $('.edit-staff-modal #email').val(staff.email);
-
-        $('.edit-staff-modal #gender').find('option[value="' + staff.gender + '"]')[0].selected = true
-        $('.edit-staff-modal #type').find('option[value="' + staff.type + '"]')[0].selected = true
-
-        disableInput();
-
-        $('.edit-staff-modal').modal('show');
+        $('.edit-classroom-modal').modal('show');
       },
       error: (err) => {
         console.error(err);
@@ -281,11 +232,11 @@
   });
 
   $('.delete').click(function () {
-    const user_id = $(this)[0].dataset['user'];
+    const classroom_id = $(this)[0].dataset['classroom'];
 
     Swal.fire({
       title: 'Confirmation de suppression',
-      text: "Êtes vous sûr de vouloir supprimer cet utilisateur?",
+      text: "Êtes vous sûr de vouloir supprimer cette classe?",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#45cb85',
@@ -295,7 +246,7 @@
     }).then((result) => {
       if (result.value) {
         $.ajax({
-          url: '/api/users/' + user_id + '/delete',
+          url: '/api/classrooms/' + classroom_id + '/delete',
           method: 'GET',
           success: (res) => {
             Swal.fire('Suppression effectuée', res.message, 'success');

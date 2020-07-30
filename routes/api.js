@@ -57,5 +57,8 @@ api.get('/users/:id/delete', authMiddleware, userController.delete);
 
 // Classrooms routes
 api.post('/classrooms', authMiddleware, studyDirector, classroomController.store);
+api.get('/classrooms/:id', authMiddleware, studyDirector, classroomController.show);
+api.post('/classrooms/:id/update', authMiddleware, studyDirector, classroomController.update);
+api.get('/classrooms/:id/delete', authMiddleware, studyDirector, classroomController.delete);
 
 module.exports = api;

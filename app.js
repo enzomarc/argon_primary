@@ -7,7 +7,8 @@ const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const { allowInsecurePrototypeAccess } = require('@handlebars/allow-prototype-access');
-const Constants = require('./util/constants');
+const constants = require('./util/constants');
+const viewHelpers = require('./util/view_helpers');
 
 const routes = require('./routes/web');
 const apiRoutes = require('./routes/api');
@@ -16,10 +17,10 @@ const user = require('./models/user');
 
 const app = express();
 
-app.use(cookieParser(Constants.SESSION_SECRET));
+app.use(cookieParser(constants.SESSION_SECRET));
 app.use(session({
     key: 'user_sid',
-    secret: Constants.SESSION_SECRET,
+    secret: constants.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { expires: new Date(Date.now() + (3600000 * 2)) }
@@ -39,7 +40,8 @@ app.engine('hbs', handlebars({
     extname: 'hbs',
     handlebars: allowInsecurePrototypeAccess(handle),
     helpers: {
-        inc: (value) => value + 1,
+        inc: viewHelpers.inc,
+        sectr: viewHelpers.parseSection
     }
 }));
 

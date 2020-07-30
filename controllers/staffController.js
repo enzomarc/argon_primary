@@ -127,7 +127,7 @@ exports.delete = async (req, res, next) => {
                 .catch((err) => console.error(err));
             } catch (err) { console.error(err) }
 
-            res.json({ message: "Le personnel a été supprimé avec succès." });
+            return res.json({ message: "Le personnel a été supprimé avec succès." });
           })
           .catch((err) => {
             console.error(err);
