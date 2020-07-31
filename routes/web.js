@@ -11,6 +11,7 @@ const classroomController = require('../controllers/classroomController');
 // Middlewares
 const authMiddleware = require('../middlewares/auth_web');
 const studyDirector = require('../middlewares/study_director');
+const scolarityMiddleware = require('../middlewares/scolarity');
 
 
 // Routes
@@ -30,5 +31,9 @@ web.get('/users', authMiddleware, userController.index);
 
 // Studies Director
 web.get('/classrooms', authMiddleware, studyDirector, classroomController.index);
+
+
+// Scolarity
+web.get('/scolarity/classrooms', authMiddleware, scolarityMiddleware, classroomController.attributions);
 
 module.exports = web;

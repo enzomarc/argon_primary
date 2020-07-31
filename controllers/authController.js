@@ -6,7 +6,7 @@ const Constants = require('../util/constants');
 exports.auth = async (req, res) => {
   const credentials = { phone: req.body.phone, password: req.body.password };
 
-  await User.findOne({ where: { phone: credentials.phone }, include: Staff })
+  await User.findOne({ where: { phone: credentials.phone }, include: 'Staff' })
     .then((user) => {
       if (user == null)
         return res.status(401).json({ message: "Numéro de téléphone ou mot de passe incorrect." });
@@ -25,6 +25,7 @@ exports.auth = async (req, res) => {
       }
     })
     .catch((err) => {
+      console.error(err);
       return res.status(401).json({ message: "Une erreur est survenue lors de la connexion.", error: err });
     });
 }
@@ -38,7 +39,7 @@ exports.verify = async (req, res) => {
       return res.status(401).json({ message: "Le token émit est corrompu." });
     }
 
-    await User.findOne({ where: { phone: decoded.phone }, include: Staff })
+    await User.findOne({ where: { phone: decoded.phone }, include: 'Staff' })
       .then((user) => {
         if (user == null)
           return res.status(401).json({ message: "Impossible d'obtenir les informations de l'utilisateur connecté." });

@@ -1,4 +1,4 @@
-const { Classroom } = require('../models/index');
+const { Classroom, Staff } = require('../models/index');
 
 /**
  * Show all classrooms.
@@ -25,7 +25,7 @@ exports.index = async (req, res) => {
     })
     .catch((err) => {
       console.error(err);
-      req.flash('error', "Une erreur est survenue lors de la récupération de la liste du personnel.");
+      req.flash('error', "Une erreur est survenue lors de la récupération de la liste des classes.");
     });
 
   res.render('studies/classrooms', { layout: 'main', title: 'Salles de classes', all: classrooms, populated: _populated, messages: _messages });
@@ -120,5 +120,37 @@ exports.delete = async (req, res) => {
     .catch((err) => {
       console.error(err);
       return res.status(500).json({ message: "Une erreur est survenue lors de la suppression de la classe." });
+    });
+}
+
+exports.attributions = async (req, res) => {
+  const error = req.flash('error');
+  const info = req.flash('info');
+  const success = req.flash('success');
+  let _populated = false;
+  let staff = [];
+  const _messages = {
+    success: success,
+    info: info,
+    error: error
+  };
+
+  await Staff.findAll({ where: { type: 'Enseignant' }, include: 'Classroom' })
+    .then(async (result) => {
+      staff = result;
+      _populated = staff.length > 0;
+
+      await Classroom.findAll()
+        .then((classes) => {
+          res.render('scolarity/classrooms', { layout: 'main', title: 'Attributions des classes', classrooms: classes, all: staff, populated: _populated, messages: _messages });
+        })
+        .catch((err) => {
+          console.error(err);
+          req.flash('error', "Une erreur est survenue lors de la récupération de la liste des classes.");
+        });
+    })
+    .catch((err) => {
+      console.error(err);
+      req.flash('error', "Une erreur est survenue lors de la récupération de la liste des enseignants.");
     });
 }

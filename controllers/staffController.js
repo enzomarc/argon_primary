@@ -89,8 +89,16 @@ exports.update = async (req, res) => {
   await Staff.findOne({ where: { id: id } })
     .then(async (staff) => {
       if (staff != null) {
+        if (req.body.classroom == 'none')
+          req.body.classroom = null;
+
         await staff.update(req.body, { where: { id: id } })
-          .then(() => {
+          .then(async (doc) => {
+            const user = await User.findOne({ where: { staff: id } });
+
+            if (user != null)
+              await user.update({ phone: doc.phone, type: doc.type });
+
             req.flash('success', "Le personnel a été modifié avec succès.");
             res.redirect('/staff');
           })

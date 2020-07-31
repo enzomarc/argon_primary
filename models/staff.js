@@ -11,7 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      const { Classroom } = models;
+
+      Staff.belongsTo(Classroom, { foreignKey: 'classroom', as: 'Classroom' });
     }
   };
   Staff.init({
@@ -24,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
     phone: { type: DataTypes.STRING, unique: true, allowNull: false },
     email: { type: DataTypes.STRING, unique: true },
     avatar: DataTypes.STRING,
-    type: { type: DataTypes.STRING, allowNull: false }
+    type: { type: DataTypes.STRING, allowNull: false },
+    classroom: { type: DataTypes.INTEGER }
   }, {
     sequelize,
     modelName: 'Staff',

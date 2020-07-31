@@ -15,15 +15,15 @@
             type="text/css" />
 
         <!-- DataTables -->
-        <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
+        <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet"
             type="text/css" />
-        <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
+        <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet"
             type="text/css" />
 
         <!-- Responsive datatable examples -->
-        <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet"
+        <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet"
             type="text/css" />
-        <link href="assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
+        <link href="/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
 
         <!-- Bootstrap Css -->
         <link href="/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
@@ -31,6 +31,7 @@
         <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
         <!-- App Css-->
         <link href="/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="/assets/css/toastr.min.css">
         <script src="/assets/libs/jquery/jquery.min.js"></script>
 
     </head>
@@ -98,7 +99,8 @@
                                                 </a>
                                                 <div class="dropdown-menu" aria-labelledby="topnav-dashboard">
                                                     <a href="/students" class="dropdown-item">Les élèves</a>
-                                                    <a href="/scolarity/staff" class="dropdown-item">Le personnel</a>
+                                                    <a href="/scolarity/classrooms" class="dropdown-item">Les
+                                                        classes</a>
                                                     <a href="/communication" class="dropdown-item">La communication</a>
                                                 </div>
                                             </li>
@@ -110,7 +112,8 @@
                                                     Direction des études <div class="arrow-down"></div>
                                                 </a>
                                                 <div class="dropdown-menu" aria-labelledby="topnav-dashboard">
-                                                    <a href="/classrooms" class="dropdown-item">Les salles de classes</a>
+                                                    <a href="/classrooms" class="dropdown-item">Les salles de
+                                                        classes</a>
                                                     <a href="/courses" class="dropdown-item">Les matières</a>
                                                     <a href="/services" class="dropdown-item">Les services</a>
                                                     <a href="/certificates" class="dropdown-item">Certificats de
@@ -384,6 +387,7 @@
         <script src="/assets/libs/metismenu/metisMenu.min.js"></script>
         <script src="/assets/libs/simplebar/simplebar.min.js"></script>
         <script src="/assets/libs/node-waves/waves.min.js"></script>
+        <script src="/assets/libs/toastr.min.js"></script>
 
         <!-- apexcharts -->
         <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
@@ -395,6 +399,10 @@
         <script src="/assets/js/pages/dashboard.init.js"></script>
 
         <script src="/assets/js/app.js"></script>
+        <script>
+            toastr.options.progressBar = true;
+            toastr.options.positionClass = "toast-bottom-full-width";
+        </script>
 
     </body>
 

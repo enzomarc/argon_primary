@@ -4,7 +4,7 @@ module.exports = (req, res, next) => {
   if (req.session.user && req.cookies.access_token) {
     const user = req.session.user;
 
-    if (user.type == "Directeur des études" || user.type == "Admin")
+    if (user.type == "Scolarité" || user.type == "Admin")
       return next();
 
     return res.status(403).render('errors/403', { layout: false });

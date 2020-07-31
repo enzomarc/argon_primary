@@ -17,7 +17,7 @@ exports.index = async (req, res) => {
     error: error
   };
 
-  await User.findAll({ include: Staff })
+  await User.findAll({ include: 'Staff' })
     .then(async (users) => {
       const _populated = users.length > 0;
 

@@ -1,0 +1,107 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-10">
+            <h4 class="card-title">Liste des enseignants de l'établissement</h4>
+            {{#if populated}}
+              <p class="card-title-desc">Visualisez la liste des enseignants de l'établissement et attribuez les des
+                classes.</p>
+            {{else}}
+              <p class="card-title-desc">Visualisez la liste des enseignants de l'établissement et attribuez les des
+                classes. Aucun enseignant disponible, allez dans la section personnel pour en ajouter.</p>
+            {{/if}}
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary float-right" data-toggle="modal" data-target=".add-classroom-modal"><i
+                class="bx bx-user-plus mr-2"></i>Ajouter</button>
+          </div>
+        </div>
+
+        {{> messages}}
+
+        {{#if populated}}
+          <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap"
+            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Enseignant</th>
+                <th>Numéro de téléphone</th>
+                <th>Classe</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {{#each all as |teacher|}}
+                <tr>
+                  <td style="font-weight: bold">{{inc @index}}</td>
+                  <td style="font-weight: bold">{{teacher.first_name}} {{teacher.last_name}}</td>
+                  <td>{{teacher.phone}}</td>
+                  <td>
+                    <select name="classroom" data-staff="{{teacher.id}}" class="form-control classroom">
+                      <option value="none">Aucune</option>
+                      {{#each ../classrooms}}
+                        {{#if_eq teacher.classroom this.id}}
+                          <option value="{{this.id}}" selected>{{this.label}} ({{sectr this.cycle}})</option>
+                      {{else}}
+                        <option value="{{this.id}}">{{this.label}} ({{sectr this.cycle}})</option>
+                        {{/if_eq}}
+                      {{/each}}
+                    </select>
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Required datatable js -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="/assets/libs/jszip/jszip.min.js"></script>
+<script src="/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+<script src="/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+<script src="/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+
+
+<script>
+  // Init DataTable
+  $('table').DataTable({ lengthChange: !1, buttons: ["copy", "excel", "pdf"] }).buttons().container().appendTo("#datatable-buttons_wrapper .col-md-6:eq(0)");
+
+  $('.classroom').change(function () {
+    const staff_id = $(this)[0].dataset['staff'];
+    const classroom = $(this).val();
+    const classroom_text = $(this).children('option:selected').text();
+    const teacher = $(this).parent().parent().find('td')[1].innerText;
+
+    $.ajax({
+      url: '/api/staff/' + staff_id + '/update',
+      method: 'POST',
+      data: { classroom: classroom },
+      success: () => {
+        if (classroom != 'none')
+          toastr.success('La classe ' + classroom_text + " a bien été attribuée à l'enseignant " + teacher + '.');
+        else
+          toastr.success("La classe de l'enseignant " + teacher + " lui a été retirée avec succès.");
+      },
+      error: (err) => {
+        console.error(err);
+        toastr.error(err.responseJSON.message, 'Erreur');
+      }
+    })
+  });
+</script>

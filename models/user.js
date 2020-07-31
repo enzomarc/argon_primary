@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       const { Staff } = models;
 
-      User.Staff = User.belongsTo(Staff, { foreignKey: 'staff' });
+      User.belongsTo(Staff, { foreignKey: 'staff', as: 'Staff' });
     }
 
     validPassword(password) {
