@@ -395,6 +395,7 @@
         $('.edit-staff-modal #gender').find('option[value="' + staff.gender + '"]')[0].selected = true
         $('.edit-staff-modal #type').find('option[value="' + staff.type + '"]')[0].selected = true
 
+        $('#edit-staff-form')[0].action = '/api/staff/' + staff.id + '/update';
         disableInput();
 
         $('.edit-staff-modal').modal('show');

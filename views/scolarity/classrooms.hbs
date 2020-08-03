@@ -13,10 +13,6 @@
                 classes. Aucun enseignant disponible, allez dans la section personnel pour en ajouter.</p>
             {{/if}}
           </div>
-          <div class="col-md-2">
-            <button class="btn btn-primary float-right" data-toggle="modal" data-target=".add-classroom-modal"><i
-                class="bx bx-user-plus mr-2"></i>Ajouter</button>
-          </div>
         </div>
 
         {{> messages}}
@@ -45,8 +41,8 @@
                       {{#each ../classrooms}}
                         {{#if_eq teacher.classroom this.id}}
                           <option value="{{this.id}}" selected>{{this.label}} ({{sectr this.cycle}})</option>
-                      {{else}}
-                        <option value="{{this.id}}">{{this.label}} ({{sectr this.cycle}})</option>
+                        {{else}}
+                          <option value="{{this.id}}">{{this.label}} ({{sectr this.cycle}})</option>
                         {{/if_eq}}
                       {{/each}}
                     </select>

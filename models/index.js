@@ -19,6 +19,7 @@ const db = {
   Staff: require('./staff')(sequelize, Sequelize.DataTypes),
   User: require('./user')(sequelize, Sequelize.DataTypes),
   Classroom: require('./classroom')(sequelize, Sequelize.DataTypes),
+  Cash: require('./cash')(sequelize, Sequelize.DataTypes)
 };
 
 Object.keys(db).forEach(modelName => {

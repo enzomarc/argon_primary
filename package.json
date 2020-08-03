@@ -21,6 +21,7 @@
     "express-session": "^1.17.1",
     "handlebars": "^4.7.6",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.27.0",
     "mongoose": "^5.9.25",
     "mysql2": "^2.1.0",
     "nodemon": "^2.0.4",

@@ -1,0 +1,406 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-10">
+            <h4 class="card-title">Liste des caisses</h4>
+            {{#if populated}}
+              <p class="card-title-desc">Visualisez la liste des caisses de paiements de l'établissement. Vous pouvez en
+                créer des nouvelles, ou juste les modifier.</p>
+            {{else}}
+              <p class="card-title-desc">Aucune caisse disponible. Cliquez sur le bouton "Ajouter" pour ajouter une
+                nouvelle caisse.</p>
+            {{/if}}
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary float-right" data-toggle="modal" data-target=".add-cash-modal"><i
+                class="bx bx-user-plus mr-2"></i>Ajouter</button>
+          </div>
+        </div>
+
+        {{> messages}}
+
+        {{#if populated}}
+          <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap"
+            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nom de la caisse</th>
+                <th>Montant</th>
+                <th>Section</th>
+                <th>Délais</th>
+                <th>Obligatoire?</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {{#each all as |cash|}}
+                <tr>
+                  <td style="font-weight: bold">{{inc @index}}</td>
+                  <td style="font-weight: bold">{{cash.name}}</td>
+                  <td>{{cash.amount}} <b>XAF</b></td>
+                  <td>{{sectr cash.cycle}}</td>
+                  <td>{{cash.delay}}</td>
+                  <td>
+                    {{#if cash.mandatory}}
+                      <span class="badge badge-success">Oui</span>
+                    {{else}}
+                      <span class="badge badge-danger">Non</span>
+                    {{/if}}
+                  </td>
+                  <td>
+                    <div class="btn-group mt-4 mt-md-0" role="group" aria-label="Staff actions">
+                      <button type="button" title="Visualiser" class="btn btn-primary show" data-cash="{{cash.id}}"><i
+                          class="bx bxs-show"></i></button>
+                      <button type="button" title="Modifier" class="btn btn-primary edit" data-cash="{{cash.id}}"><i
+                          class="bx bx-edit-alt"></i></button>
+                      <button type="button" title="Supprimer" class="btn btn-danger delete" data-cash="{{cash.id}}"><i
+                          class="bx bx-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add cash modal -->
+<div class="modal fade add-cash-modal" tabindex="-1" role="dialog" aria-labelledby="Add cash modal"
+  style="display: none;" aria-modal="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="col-md-10">
+          <h5 class="modal-title mt-0" id="myLargeModalLabel">Ajouter une caisse</h5>
+          <p class="card-title-desc" style="margin-bottom: 0">Remplissez tous les champs requis et cliquez sur
+            Enregistrer.</p>
+        </div>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <form action="/api/cash" method="post">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="name">Nom de la caisse *</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Inscription" required>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="level">Niveau *</label>
+                <select name="level[]" class="form-control select2" multiple required>
+                  <option value="1" selected>Niveau 1</option>
+                  <option value="2">Niveau 2</option>
+                  <option value="3">Niveau 3</option>
+                  <option value="4">Niveau 4</option>
+                  <option value="5">Niveau 5</option>
+                  <option value="6">Niveau 6</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="cycle">Section *</label>
+                <select name="cycle" class="form-control" required>
+                  <option value="">Sélectionnez la section de la caisse</option>
+                  <option value="FR">Francophone</option>
+                  <option value="EN">Anglophone</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="amount">Montant *</label>
+                <input type="text" class="form-control input-mask text-left" name="amount" placeholder="50.000 FCFA"
+                  data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'digits': 2, 'digitsOptional': false, 'suffix': ' FCFA', 'placeholder': '0', 'min': 1"
+                  required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mandatory">Obligatoire *</label>
+                <select name="mandatory" class="form-control" required>
+                  <option value="1">Oui</option>
+                  <option value="0">Non</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="delay">Délais de paiement *</label>
+                <input type="date" class="form-control" name="delay" required>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="cancel" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-success">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- End add cash modal -->
+
+<!-- Edit cash modal -->
+<div class="modal fade edit-cash-modal" tabindex="-1" role="dialog" aria-labelledby="Edit cash modal"
+  style="display: none;" aria-modal="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="col-md-10">
+          <h5 class="modal-title mt-0" id="myLargeModalLabel">Modifier une caisse</h5>
+          <p class="card-title-desc" style="margin-bottom: 0">Remplissez tous les champs requis et cliquez sur
+            Enregistrer.</p>
+        </div>
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <form id="edit-cash-form" action="/api/cash" method="post">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="name">Nom de la caisse *</label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="Inscription" required>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="level">Niveau *</label>
+                <select name="level[]" id="level" class="form-control select2" multiple required>
+                  <option value="1">Niveau 1</option>
+                  <option value="2">Niveau 2</option>
+                  <option value="3">Niveau 3</option>
+                  <option value="4">Niveau 4</option>
+                  <option value="5">Niveau 5</option>
+                  <option value="6">Niveau 6</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="cycle">Section *</label>
+                <select name="cycle" id="cycle" class="form-control" required>
+                  <option value="">Sélectionnez la section de la caisse</option>
+                  <option value="FR">Francophone</option>
+                  <option value="EN">Anglophone</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="amount">Montant *</label>
+                <input type="text" class="form-control input-mask text-left" name="amount" id="amount"
+                  placeholder="50.000 FCFA"
+                  data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'digits': 2, 'digitsOptional': false, 'suffix': ' FCFA', 'placeholder': '0', 'min': 1"
+                  required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="mandatory">Obligatoire *</label>
+                <select name="mandatory" id="mandatory" class="form-control" required>
+                  <option value="1">Oui</option>
+                  <option value="0">Non</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="delay">Délais de paiement *</label>
+                <input type="date" class="form-control" name="delay" id="delay" required>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="cancel" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-success">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- End edit staff modal -->
+
+<!-- Required datatable js -->
+<script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="/assets/libs/jszip/jszip.min.js"></script>
+<script src="/assets/libs/pdfmake/build/pdfmake.min.js"></script>
+<script src="/assets/libs/pdfmake/build/vfs_fonts.js"></script>
+<script src="/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<!-- Responsive examples -->
+<script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+<!-- Input mask -->
+<script src="/assets/libs/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+<script src="/assets/js/pages/form-mask.init.js"></script>
+<script src="/assets/libs/moment.js"></script>
+<script src="/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+<script src="/assets/libs/select2/js/select2.min.js"></script>
+
+<script>
+  $('.select2').select2({ width: '100%' });
+
+  const disableInput = () => {
+    const input = $('#edit-cash-form').find('input');
+    const select = $('#edit-cash-form').find('select');
+
+    for (item of input) {
+      item.disabled = true;
+    }
+
+    for (item of select) {
+      item.disabled = true;
+    }
+  };
+
+  const enableInput = () => {
+    const input = $('#edit-cash-form').find('input');
+    const select = $('#edit-cash-form').find('select');
+
+    for (item of input) {
+      item.disabled = false;
+    }
+
+    for (item of select) {
+      item.disabled = false;
+    }
+  };
+
+  // Init DataTable
+  $('table').DataTable({ lengthChange: !1, buttons: ["copy", "excel", "pdf", "colvis"] }).buttons().container().appendTo("#datatable-buttons_wrapper .col-md-6:eq(0)");
+
+  $('.edit').click(function () {
+    const cash_id = $(this)[0].dataset['cash'];
+
+    $.ajax({
+      method: 'GET',
+      url: '/api/cash/' + cash_id,
+      success: (cash) => {
+        console.log(cash);
+        cash.mandatory = cash.mandatory ? 1 : 0;
+        $('.edit-cash-modal #name').val(cash.name);
+        $('.edit-cash-modal #delay').val(moment(cash.delay).format('YYYY-MM-DD'));
+        $('.edit-cash-modal #amount').val(cash.amount);
+
+        $('.edit-cash-modal #mandatory').find('option[value="' + cash.mandatory + '"]')[0].selected = true
+        $('.edit-cash-modal #cycle').find('option[value="' + cash.cycle + '"]')[0].selected = true
+        for (const level of cash.level) {
+          $('.edit-cash-modal #level').find('option[value="' + level + '"]')[0].selected = true
+        }
+        $('.select2').select2({ width: '100%' });
+
+        $('#edit-cash-form')[0].action = '/api/cash/' + cash.id + '/update';
+        enableInput();
+
+        $('.edit-cash-modal').modal('show');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  });
+
+  $('.show').click(function () {
+    const cash_id = $(this)[0].dataset['cash'];
+
+    $.ajax({
+      method: 'GET',
+      url: '/api/cash/' + cash_id,
+      success: (cash) => {
+        cash.mandatory = cash.mandatory ? 1 : 0;
+        $('.edit-cash-modal #name').val(cash.name);
+        $('.edit-cash-modal #delay').val(moment(cash.delay).format('YYYY-MM-DD'));
+        $('.edit-cash-modal #amount').val(cash.amount);
+
+        $('.edit-cash-modal #mandatory').find('option[value="' + cash.mandatory + '"]')[0].selected = true
+        $('.edit-cash-modal #cycle').find('option[value="' + cash.cycle + '"]')[0].selected = true
+        for (const level of cash.level) {
+          $('.edit-cash-modal #level').find('option[value="' + level + '"]')[0].selected = true
+        }
+        $('.select2').select2({ width: '100%' });
+
+        $('#edit-cash-form')[0].action = '/api/cash/' + cash.id + '/update';
+        disableInput();
+
+        $('.edit-cash-modal').modal('show');
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+  });
+
+  $('.delete').click(function () {
+    const cash_id = $(this)[0].dataset['cash'];
+
+    Swal.fire({
+      title: 'Confirmation de suppression',
+      text: "Êtes vous sûr de vouloir supprimer cette caisse?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#45cb85',
+      cancelButtonColor: '#9095ad',
+      confirmButtonText: 'Oui, supprimer',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          url: '/api/cash/' + cash_id + '/delete',
+          method: 'GET',
+          success: (res) => {
+            Swal.fire('Suppression effectuée', res.message, 'success');
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          },
+          error: (err) => {
+            console.error(err);
+            Swal.fire('Erreur de suppression', err.responseJSON.message, 'error');
+          }
+        });
+      }
+    });
+  });
+</script>

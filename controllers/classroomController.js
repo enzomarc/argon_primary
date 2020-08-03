@@ -45,7 +45,7 @@ exports.show = async (req, res) => {
     .catch((err) => {
       console.error(err);
       return res.status(500).json({ message: "Impossible d'obtenir les informations de la salle de classe." });
-    })
+    });
 }
 
 /**
@@ -93,13 +93,16 @@ exports.update = async (req, res) => {
           .then(() => {
             req.flash('success', "La classe a été modifiée avec succès.");
             return res.redirect('/classrooms');
-          })
-          .catch((err) => {
+          }).catch((err) => {
             console.error(err);
             req.flash('error', "Une erreur est survenue lors de la modification de la classe.");
             return res.status(500).redirect('/classrooms');
           });
       }
+    }).catch((err) => {
+      console.error(err);
+      req.flash('error', "Impossible de trouver la caisse à modifier.");
+      return res.status(500).redirect('/classrooms');
     });
 }
 
@@ -123,6 +126,12 @@ exports.delete = async (req, res) => {
     });
 }
 
+/**
+ * Show classrooms attributions page.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.attributions = async (req, res) => {
   const error = req.flash('error');
   const info = req.flash('info');
@@ -147,10 +156,12 @@ exports.attributions = async (req, res) => {
         .catch((err) => {
           console.error(err);
           req.flash('error', "Une erreur est survenue lors de la récupération de la liste des classes.");
+          res.render('scolarity/classrooms', { layout: 'main', title: 'Attributions des classes', classrooms: classes, all: staff, populated: _populated, messages: _messages });
         });
     })
     .catch((err) => {
       console.error(err);
       req.flash('error', "Une erreur est survenue lors de la récupération de la liste des enseignants.");
+      res.render('scolarity/classrooms', { layout: 'main', title: 'Attributions des classes', classrooms: classes, all: staff, populated: _populated, messages: _messages });
     });
 }
