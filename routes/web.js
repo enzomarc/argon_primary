@@ -1,5 +1,6 @@
 const express = require('express');
 const web = express.Router();
+const bcrypt = require('bcrypt');
 
 const configController = require('../controllers/configController');
 const staffController = require('../controllers/staffController');
@@ -42,5 +43,11 @@ web.get('/scolarity/students', authMiddleware, scolarityMiddleware, classroomCon
 
 // Treasure
 web.get('/treasure/cash', authMiddleware, treasureMiddleware, cashController.index);
+web.get('/hash', (req, res, next) => {
+  const salt = bcrypt.genSaltSync(12);
+  const password = bcrypt.hashSync('password', salt);
+
+  return res.end(password);
+});
 
 module.exports = web;
